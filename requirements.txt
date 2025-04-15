@@ -11,9 +11,6 @@ plotly
 nltk
 python-dotenv
 
-# Download spaCy model after install
-spacy download en_core_web_sm
-
 # --- Notes ---
 # For reproducibility, consider pinning specific versions, e.g.:
 # streamlit==1.33.0

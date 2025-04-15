@@ -17,6 +17,8 @@ from gensim.models import LdaMulticore
 from nltk.corpus import stopwords
 import os
 from dotenv import load_dotenv
+import subprocess
+import sys
 
 # --- Logging Setup ---
 logging.basicConfig(
@@ -35,13 +37,15 @@ load_dotenv()
 logger.info("Environment variables loaded.")
 
 try:
-    nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
-    nlp.max_length = 2000000
-    logger.info("spaCy model 'en_core_web_sm' loaded.")
+    import spacy
+    spacy.load("en_core_web_sm")
 except OSError:
-    logger.error("SpaCy model 'en_core_web_sm' not found.")
-    st.error("SpaCy model 'en_core_web_sm' not found. Please run: `python -m spacy download en_core_web_sm`")
-    st.stop()
+    subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])
+    import spacy
+
+nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
+nlp.max_length = 2000000
+logger.info("spaCy model 'en_core_web_sm' loaded.")
 
 stop_words = stopwords.words('english')
 logger.info("NLTK stopwords loaded.")
