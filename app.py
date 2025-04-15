@@ -13,7 +13,6 @@ from openai import OpenAI
 import gensim
 import gensim.corpora as corpora
 from gensim.models import LdaMulticore
-from nltk.corpus import stopwords
 import os
 from dotenv import load_dotenv
 import subprocess
@@ -37,9 +36,8 @@ logger.info("Streamlit app started.")
 load_dotenv()
 logger.info("Environment variables loaded.")
 
-stop_words = set(stopwords.words('english'))
 stemmer = PorterStemmer()
-logger.info("NLTK stopwords loaded.")
+logger.info("NLTK stemmer loaded.")
 
 def safe_float_convert(value, default=0.0):
     try:
@@ -51,14 +49,13 @@ def safe_float_convert(value, default=0.0):
 def preprocess_for_gensim(text):
     if not isinstance(text, str): text = str(text)
     result = gensim.utils.simple_preprocess(text, deacc=True)
-    result = [word for word in result if word not in stop_words]
     return result
 
 @st.cache_data
 def preprocess_for_sklearn(text):
     if not isinstance(text, str): text = str(text)
     text = re.sub(r'\s+', ' ', text).strip().lower()
-    tokens = [word for word in re.findall(r'\b[a-z]+\b', text) if word not in stop_words]
+    tokens = re.findall(r'\b[a-z]+\b', text)
     tokens = [stemmer.stem(word) for word in tokens]
     return " ".join(tokens) if tokens else ""
 
