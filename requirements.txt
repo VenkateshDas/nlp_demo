@@ -1,0 +1,25 @@
+# Base Python packages for the NLP demo application
+streamlit
+pandas
+scikit-learn
+spacy
+textblob # Included as it was in the original pip command, though openai is used for sentiment in the final demo
+matplotlib
+openai
+gensim
+plotly
+nltk
+python-dotenv
+
+# --- Notes ---
+# For reproducibility, consider pinning specific versions, e.g.:
+# streamlit==1.33.0
+# pandas==2.2.1
+# etc.
+# You can generate pinned versions from your working environment using: pip freeze > requirements.txt
+
+# After installing these packages, you also need to download specific data:
+# 1. SpaCy English model:
+#    python -m spacy download en_core_web_sm
+# 2. NLTK stopwords data:
+#    python -m nltk.downloader stopwords
