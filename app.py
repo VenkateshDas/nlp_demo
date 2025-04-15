@@ -16,7 +16,7 @@ import gensim.corpora as corpora
 from gensim.models import LdaMulticore
 from nltk.corpus import stopwords
 import os
-from dotenv import load_dotenvgpt
+from dotenv import load_dotenv
 
 # --- Logging Setup ---
 logging.basicConfig(
