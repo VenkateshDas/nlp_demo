@@ -1,7 +1,6 @@
 import logging
 import streamlit as st
 import pandas as pd
-import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
@@ -19,6 +18,8 @@ import os
 from dotenv import load_dotenv
 import subprocess
 import sys
+import nltk
+from nltk.stem import PorterStemmer
 
 # --- Logging Setup ---
 logging.basicConfig(
@@ -36,18 +37,8 @@ logger.info("Streamlit app started.")
 load_dotenv()
 logger.info("Environment variables loaded.")
 
-try:
-    import spacy
-    spacy.load("en_core_web_sm")
-except OSError:
-    subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])
-    import spacy
-
-nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
-nlp.max_length = 2000000
-logger.info("spaCy model 'en_core_web_sm' loaded.")
-
-stop_words = stopwords.words('english')
+stop_words = set(stopwords.words('english'))
+stemmer = PorterStemmer()
 logger.info("NLTK stopwords loaded.")
 
 def safe_float_convert(value, default=0.0):
@@ -67,11 +58,8 @@ def preprocess_for_gensim(text):
 def preprocess_for_sklearn(text):
     if not isinstance(text, str): text = str(text)
     text = re.sub(r'\s+', ' ', text).strip().lower()
-    doc = nlp(text)
-    tokens = [
-        token.lemma_ for token in doc
-        if token.is_alpha and not token.is_stop and not token.is_punct and not token.is_space
-    ]
+    tokens = [word for word in re.findall(r'\b[a-z]+\b', text) if word not in stop_words]
+    tokens = [stemmer.stem(word) for word in tokens]
     return " ".join(tokens) if tokens else ""
 
 api_key_env = os.getenv("OPENAI_API_KEY")
